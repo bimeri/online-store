@@ -78,26 +78,27 @@ public class ServiceImplementation<T> implements Services{
         laptopRepository.save(laptop);
 
         // case 2  do A REST call to an external Invoicing service
-        String invoiceServiceUrl = "http://localhost:8080/online-store/api/purchase/try";
-        doRestTemplateHttpPostRequest((T) purchaseDto, invoiceServiceUrl);
+        String url = "http://localhost:8080/online-store/api/purchase/try";
+        doRestTemplateHttpPostRequest((T) purchaseDto, url);
 
-        // case 3  do an api call to
+        // case 3  do an api call to send email to email service
         List<Ram> ramsModel = ramRepository.findAllByLaptop_IdOrderByIdAsc(laptop.getId());
         EmailDto emailDto = new EmailDto();
         emailDto.setModelName(laptop.getModelName());
         emailDto.setRams(ramsModel);
 
+        url = "http://localhost:8080/online-store/api/purchase/try";
+        doRestTemplateHttpPostRequest((T) emailDto, url);
+
         String profile = Arrays.toString(environment.getActiveProfiles());
         profile = profile.toLowerCase();
         if (profile.contains("mq_notification")) {
             rabbitService.sendNotificationToRabbit(emailDto);
-        } else {
-            String emailServiceUrl = "http://localhost:8080/online-store/api/purchase/try";
-            doRestTemplateHttpPostRequest((T) emailDto, emailServiceUrl);
         }
 
         map.put("data", laptop);
         map.put("erc", 1);
+        map.put("response", Constants.SUCCESS_PURCHASE);
         return map;
     }
 

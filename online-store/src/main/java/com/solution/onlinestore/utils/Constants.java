@@ -13,4 +13,5 @@ public class Constants {
  public static final String ERROR_RESPONSE = "No laptop with the given model was not found";
  public static final String RESPONSE_FINISHED_MESSAGE = "Laptops for the given model are finished!";
  public static final String LIMITED_AMOUNT = "Laptops are limited. there are only: ";
+ public static final String SUCCESS_PURCHASE = "You have successfully purchase Laptop.";
 }
