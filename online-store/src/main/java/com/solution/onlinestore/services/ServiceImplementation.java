@@ -46,7 +46,7 @@ public class ServiceImplementation<T> implements Services{
     @Transactional(rollbackFor = Exception.class)
     @Override
     public Map<String, Object> purchase(PurchaseDto purchaseDto) {
-        if (purchaseDto == null || purchaseDto.getQuantity() < 1){
+        if (purchaseDto == null || purchaseDto.getQuantity() < 1) {
             return null;
         }
         Map<String, Object> map = new HashMap<>();
@@ -75,19 +75,21 @@ public class ServiceImplementation<T> implements Services{
         int quantity = laptop.getAvailableQty() - purchaseDto.getQuantity();
         int newQuantity = quantity < 1 ? 0 : quantity;
         laptop.setAvailableQty(newQuantity);
-        laptopRepository.save(laptop);
+        Laptop ll = laptopRepository.save(laptop);
 
+        System.out.printf("laptop updated: "+ ll.getAvailableQty());
         // case 2  do A REST call to an external Invoicing service
-        String url = "http://localhost:8080/online-store/api/purchase/try";
+        String url = "http://localhost:8080/invoice-service/sendInvoice";
         doRestTemplateHttpPostRequest((T) purchaseDto, url);
 
         // case 3  do an api call to send email to email service
         List<Ram> ramsModel = ramRepository.findAllByLaptop_IdOrderByIdAsc(laptop.getId());
         EmailDto emailDto = new EmailDto();
         emailDto.setModelName(laptop.getModelName());
+        emailDto.setMessage("quantity: " + purchaseDto.getQuantity());
         emailDto.setRams(ramsModel);
 
-        url = "http://localhost:8080/online-store/api/purchase/try";
+        url = "http://localhost:8080/email-service/sendMail";
         doRestTemplateHttpPostRequest((T) emailDto, url);
 
         String profile = Arrays.toString(environment.getActiveProfiles());
@@ -103,13 +105,13 @@ public class ServiceImplementation<T> implements Services{
     }
 
 
-    public String doRestTemplateHttpPostRequest(T t, String url) {
+    public void doRestTemplateHttpPostRequest(T t, String url) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<T> entity = new HttpEntity<>(t, headers);
-        ResponseEntity<String> stringResponseEntity = restTemplate.postForEntity(url, entity, String.class);
+        ResponseEntity<Object> stringResponseEntity = restTemplate.postForEntity(url, entity, Object.class);
 
-       return stringResponseEntity.getBody();
+        stringResponseEntity.getBody();
 
     }
 

@@ -28,5 +28,4 @@ public class PurchaseController {
      public ResponseEntity<Map<String, Object>> purchaseLaptop(@RequestBody PurchaseDto purchaseDto) {
         return ResponseEntity.ok(service.purchase(purchaseDto));
      }
-
 }

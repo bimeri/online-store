@@ -30,7 +30,6 @@ public class MQConfig {
    return new TopicExchange(exchangeKeyEmail);
   }
 
-
   @Bean
   public Binding binding(Queue queue, TopicExchange exchange) {
    return BindingBuilder.bind(queue).to(exchange).with(routineKeyEmail);

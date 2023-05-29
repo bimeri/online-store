@@ -21,7 +21,7 @@ public class RabbitService {
  private TopicExchange topicExchange;
  private final RabbitTemplate template;
  private final AmqpAdmin amqpAdmin;
- private Logger LOG = LogManager.getLogger(RabbitService.class);
+ private final Logger LOG = LogManager.getLogger(RabbitService.class);
 
  @Autowired
  void setPushNotificationExchange(@Qualifier("exchange") TopicExchange exchange) {
